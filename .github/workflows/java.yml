@@ -83,6 +83,12 @@ jobs:
                   
             - name: Dump matrix context
               run: echo '${{ toJson(matrix) }}'
+              
+            - name: Set up JDK ${{ matrix.java }}
+              uses: actions/setup-java@v4
+              with:
+                  distribution: "temurin"
+                  java-version: ${{ matrix.java }}
 
     build-amazonlinux-latest:
         if: github.repository_owner == 'valkey-io' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.event.inputs.full-matrix == 'true'
