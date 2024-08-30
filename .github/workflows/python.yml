@@ -46,6 +46,10 @@ on:
                 description: "Test run name"
 
     workflow_call:
+        inputs:
+            full-matrix:
+                required: true
+                type: boolean
 
 concurrency:
     group: python-${{ github.head_ref || github.ref }}

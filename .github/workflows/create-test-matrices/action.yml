@@ -33,7 +33,6 @@ runs:
           shell: bash
           run: |
               echo 'Select server engines to run tests against'
-              echo ${{ inputs.run-full-matrix }}
               if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "push" || "${{ inputs.run-full-matrix }}" == "false" ]]; then
                   echo 'Pick engines marked as `"run": "always"` only - on PR, push or manually triggered job which does not require full matrix'
                   echo engine-matrix=$(jq -c '[.[] | select(.run == "always")]' < .github/json_matrices/engine-matrix.json) >> $GITHUB_OUTPUT
