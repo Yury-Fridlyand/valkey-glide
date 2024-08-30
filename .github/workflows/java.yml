@@ -82,7 +82,7 @@ jobs:
                   submodules: recursive
                   
             - name: Dump matrix context
-              run: echo ${{ toJson(matrix) }}
+              run: echo '${{ toJson(matrix) }}'
 
     build-amazonlinux-latest:
         if: github.repository_owner == 'valkey-io' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.event.inputs.full-matrix == 'true'
