@@ -56,7 +56,7 @@ jobs:
     get-matrices:
         runs-on: ubuntu-latest
         # Avoid running on schedule on repo forks
-        if: (github.event_name == 'schedule') || github.event_name == 'push' || github.event_name == 'pull_request'
+        if: (github.event_name == 'schedule') || github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         outputs:
             engine-matrix-output: ${{ steps.get-matrices.outputs.engine-matrix-output }}
             host-matrix-output: ${{ steps.get-matrices.outputs.host-matrix-output }}
