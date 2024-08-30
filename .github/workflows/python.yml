@@ -41,8 +41,7 @@ on:
                 type: boolean
                 default: "false"
 
-    schedule:
-        - cron: "0 4 * * *"
+    workflow_call:
 
 concurrency:
     group: python-${{ github.head_ref || github.ref }}

@@ -35,8 +35,7 @@ on:
                 type: boolean
                 default: "false"
 
-    schedule:
-        - cron: "0 5 * * *"
+    workflow_call:
 
 concurrency:
     group: java-${{ github.head_ref || github.ref }}

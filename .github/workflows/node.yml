@@ -39,8 +39,7 @@ on:
                 type: boolean
                 default: "false"
 
-    schedule:
-        - cron: "0 6 * * *"
+    workflow_call:
 
 concurrency:
     group: node-${{ github.head_ref || github.ref }}
