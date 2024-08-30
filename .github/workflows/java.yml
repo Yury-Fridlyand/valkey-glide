@@ -34,6 +34,10 @@ on:
                 required: false
                 type: boolean
                 default: "false"
+            name:
+                required: false
+                type: string
+                description: "Test run name"
 
     workflow_call:
 

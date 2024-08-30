@@ -11,9 +11,8 @@ inputs:
             - C#
     run-full-matrix:
         description: "Run the full matrix"
-        required: false
+        required: true
         type: boolean
-        default: "false"
 
 outputs:
     engine-matrix-output:
@@ -34,6 +33,7 @@ runs:
           shell: bash
           run: |
               echo 'Select server engines to run tests against'
+              echo ${{ inputs.dispatch-run-full-matrix }}
               if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "push" || "${{ inputs.dispatch-run-full-matrix }}" == "false" ]]; then
                   echo 'Pick engines marked as `"run": "always"` only - on PR, push or manually triggered job which does not require full matrix'
                   echo engine-matrix=$(jq -c '[.[] | select(.run == "always")]' < .github/json_matrices/engine-matrix.json) >> $GITHUB_OUTPUT
