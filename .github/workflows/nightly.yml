@@ -1,0 +1,42 @@
+name: Nightly tests
+
+on:
+    workflow_dispatch:
+        inputs:
+            full-matrix:
+                description: "Run the full engine, host, and language version matrix"
+                required: false
+                type: boolean
+                default: "false"
+            name:
+                required: false
+                type: string
+                description: "Test run name"
+
+    schedule:
+        - cron: "*/5 * * * *"
+#        - cron: "0 4 * * *"
+
+concurrency:
+    group: nightly-${{ github.head_ref || github.ref }}
+    cancel-in-progress: true
+
+run-name:
+    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
+
+jobs:
+    run-full-tests-for-clients:
+        timeout-minutes: 50
+        #runs-on: ${{ matrix.host.RUNNER }}
+        strategy:
+            fail-fast: false
+            matrix:
+                client:
+                    - java
+                    - python
+                    - node
+                    - csharp
+                    - go
+                    - rust
+        uses: ./.github/workflows/${{ matrix.client }}.yml
+        name: Run CI for ${{ matrix.client }}
