@@ -44,8 +44,8 @@ concurrency:
 jobs:
     get-matrices:
         runs-on: ubuntu-latest
-        # Avoid running on schedule for forks
-        if: (github.event_name == 'schedule' && github.repository_owner == 'valkey-io') || github.event_name == 'push' || github.event_name == 'pull_request'
+        # Avoid running on schedule on repo forks (scheduled job uses `workflow_call` to call this one)
+        if: (github.event_name == 'workflow_call' && github.repository_owner == 'valkey-io') || github.event_name == 'push' || github.event_name == 'pull_request'
         outputs:
             engine-matrix-output: ${{ steps.get-matrices.outputs.engine-matrix-output }}
             host-matrix-output: ${{ steps.get-matrices.outputs.host-matrix-output }}
