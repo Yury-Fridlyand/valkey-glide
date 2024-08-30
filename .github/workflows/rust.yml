@@ -23,6 +23,7 @@ on:
             - .github/workflows/install-valkey/action.yml
             - .github/json_matrices/build-matrix.json
     workflow_dispatch:
+    workflow_call:
 
 concurrency:
     group: rust-${{ github.head_ref || github.ref }}
