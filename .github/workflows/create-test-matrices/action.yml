@@ -33,12 +33,12 @@ runs:
           id: load-engine-matrix
           shell: bash
           run: |
-              : Select server engines to run tests against
+              echo 'Select server engines to run tests against'
               if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "push" || "${{ inputs.dispatch-run-full-matrix }}" == "false" ]]; then
-                  : Pick engines marked as '"run": "always"' only - on PR, push or manually triggered job which does not require full matrix
+                  echo 'Pick engines marked as `"run": "always"` only - on PR, push or manually triggered job which does not require full matrix'
                   echo "engine-matrix=$(jq -c '[.[] | select(.run == "always")]' < .github/json_matrices/engine-matrix.json)" >> $GITHUB_OUTPUT
               else
-                  : Pick all engines - on cron (schedule) or if manually triggered job requires a full matrix
+                  echo 'Pick all engines - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo "engine-matrix=$(jq -c . < .github/json_matrices/engine-matrix.json)" >> $GITHUB_OUTPUT
               fi
               echo "engine-matrix=$(cat $GITHUB_OUTPUT)"
@@ -47,12 +47,12 @@ runs:
           id: load-host-matrix
           shell: bash
           run: |
-              : Select runners (VMs) to run tests on
+              echo 'Select runners (VMs) to run tests on'
               if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "push" || "${{ inputs.dispatch-run-full-matrix }}" == "false" ]]; then
-                  : Pick runners marked as '"run": "always"' only - on PR, push or manually triggered job which does not require full matrix
+                  echo 'Pick runners marked as '"run": "always"' only - on PR, push or manually triggered job which does not require full matrix'
                   echo 'host-matrix=$(jq -c '[.[] | select(.run == "always")]' < .github/json_matrices/build-matrix.json)' >> $GITHUB_OUTPUT
               else
-                  : Pick all runners assigned for the chosen client (language) - on cron (schedule) or if manually triggered job requires a full matrix
+                  echo 'Pick all runners assigned for the chosen client (language) - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo 'host-matrix=$(jq -c '[.[] | select(.languages | type == "array" and contains(["${{ inputs.language-name }}"]))]' < .github/json_matrices/build-matrix.json) >> $GITHUB_OUTPUT
               fi
               echo "host-matrix=$(cat $GITHUB_OUTPUT)"
@@ -61,12 +61,12 @@ runs:
           id: create-lang-version-matrix
           shell: bash
           run: |
-              : Select language (framework/SDK) versions to run tests on
+              echo 'Select language (framework/SDK) versions to run tests on'
               if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "push" || "${{ inputs.dispatch-run-full-matrix }}" == "false" ]]; then
-                  : Pick language versions listed in 'always-run-versions' only - on PR, push or manually triggered job which does not require full matrix
+                  echo 'Pick language versions listed in 'always-run-versions' only - on PR, push or manually triggered job which does not require full matrix'
                   echo 'version-matrix=$(jq -c '[.[] | select(.language == "${{ inputs.language-name }}") | .["always-run-versions"] | map({version: .})]' < .github/json_matrices/supported-language-versions.json) >> $GITHUB_OUTPUT
               else
-                  : Pick language versions listed in 'versions' - on cron (schedule) or if manually triggered job requires a full matrix
+                  echo 'Pick language versions listed in 'versions' - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo 'version-matrix=$(jq -c '[.[] | select(.language == "${{ inputs.language-name }}") | .versions | map({version: .})]' < .github/json_matrices/supported-language-versions.json) >> $GITHUB_OUTPUT
               fi
               echo "version-matrix=$(cat $GITHUB_OUTPUT)"
