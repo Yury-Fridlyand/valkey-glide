@@ -68,7 +68,7 @@ jobs:
               uses: ./.github/workflows/create-test-matrices
               with:
                   language-name: python
-                  run-full-matrix: ${{ github.event.inputs.full-matrix || 'true' }}
+                  run-full-matrix: ${{ github.event.inputs.full-matrix || 'false' }}
 
     test-python:
         runs-on: ${{ matrix.host.RUNNER }}
