@@ -27,37 +27,31 @@ run-name:
 # TODO matrix by workflow (`uses`) - not supported yet by GH
 jobs:
     run-full-tests-for-java:
-        timeout-minutes: 50
         uses: ./.github/workflows/java.yml
         name: Run CI for java client
         secrets: inherit
 
     run-full-tests-for-python:
-        timeout-minutes: 50
         uses: ./.github/workflows/python.yml
         name: Run CI for python client
         secrets: inherit
 
     run-full-tests-for-node:
-        timeout-minutes: 50
         uses: ./.github/workflows/node.yml
         name: Run CI for node client
         secrets: inherit
 
     run-full-tests-for-csharp:
-        timeout-minutes: 50
         uses: ./.github/workflows/csharp.yml
         name: Run CI for csharp client
         secrets: inherit
 
     run-full-tests-for-go:
-        timeout-minutes: 50
         uses: ./.github/workflows/go.yml
         name: Run CI for go client
         secrets: inherit
 
     run-full-tests-for-rust:
-        timeout-minutes: 50
         uses: ./.github/workflows/rust.yml
         name: Run CI for GLIDE core lib
         secrets: inherit
