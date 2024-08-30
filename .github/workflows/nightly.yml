@@ -15,28 +15,49 @@ on:
 
     schedule:
         - cron: "*/5 * * * *"
-#        - cron: "0 4 * * *"
+#        - cron: "0 3 * * *"  #  Runs at 03:00 (3 AM) UTC every day
 
 concurrency:
     group: nightly-${{ github.head_ref || github.ref }}
     cancel-in-progress: true
 
 run-name:
-    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
+    ${{ github.event_name == 'schedule' && github.event.created_at || (inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name) }}
 
+# TODO matrix by workflow (`uses`) - not supported yet by GH
 jobs:
-    run-full-tests-for-clients:
+    run-full-tests-for-java:
         timeout-minutes: 50
-        #runs-on: ${{ matrix.host.RUNNER }}
-        strategy:
-            fail-fast: false
-            matrix:
-                client:
-                    - java
-                    - python
-                    - node
-                    - csharp
-                    - go
-                    - rust
-        uses: ./.github/workflows/${{ matrix.client }}.yml
-        name: Run CI for ${{ matrix.client }}
+        uses: ./.github/workflows/java.yml
+        name: Run CI for java client
+        secrets: inherit
+
+    run-full-tests-for-python:
+        timeout-minutes: 50
+        uses: ./.github/workflows/python.yml
+        name: Run CI for python client
+        secrets: inherit
+
+    run-full-tests-for-node:
+        timeout-minutes: 50
+        uses: ./.github/workflows/node.yml
+        name: Run CI for node client
+        secrets: inherit
+
+    run-full-tests-for-csharp:
+        timeout-minutes: 50
+        uses: ./.github/workflows/csharp.yml
+        name: Run CI for csharp client
+        secrets: inherit
+
+    run-full-tests-for-go:
+        timeout-minutes: 50
+        uses: ./.github/workflows/go.yml
+        name: Run CI for go client
+        secrets: inherit
+
+    run-full-tests-for-rust:
+        timeout-minutes: 50
+        uses: ./.github/workflows/rust.yml
+        name: Run CI for GLIDE core lib
+        secrets: inherit
