@@ -46,7 +46,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Dump GitHub context
-            run: echo ${{ toJson(github) }}
+            run: echo '${{ toJson(github) }}'
 
     get-matrices:
         runs-on: ubuntu-latest
