@@ -24,42 +24,42 @@ jobs:
         name: Run CI for java client
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     run-full-tests-for-python:
         uses: ./.github/workflows/python.yml
         name: Run CI for python client
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     run-full-tests-for-node:
         uses: ./.github/workflows/node.yml
         name: Run CI for node client
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     run-full-tests-for-csharp:
         uses: ./.github/workflows/csharp.yml
         name: Run CI for csharp client
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     run-full-tests-for-go:
         uses: ./.github/workflows/go.yml
         name: Run CI for go client
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     run-full-tests-for-rust:
         uses: ./.github/workflows/rust.yml
         name: Run CI for GLIDE core lib
         secrets: inherit
         with:
-            full-matrix: ${{ inputs.full-matrix }}
+            full-matrix: ${{ github.event_name == 'schedule' || inputs.full-matrix }}
 
     log-contexts:
         runs-on: ubuntu-latest
