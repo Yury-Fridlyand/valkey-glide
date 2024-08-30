@@ -22,7 +22,7 @@ concurrency:
     cancel-in-progress: true
 
 run-name:
-    ${{ (github.event_name == 'schedule' && `date +'%Y-%m-%d'`) || (inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name) }}
+    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
 
 # TODO matrix by workflow (`uses`) - not supported yet by GH
 jobs:
