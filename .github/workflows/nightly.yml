@@ -21,9 +21,6 @@ concurrency:
     group: nightly-${{ github.head_ref || github.ref }}
     cancel-in-progress: true
 
-run-name:
-    ${{ inputs.name == '' && format('{0} @ [{1}]({2}/commit/{1})', github.ref_name, github.sha, github.event.repository.html_url) || inputs.name }}
-
 # TODO matrix by workflow (`uses`) - not supported yet by GH
 jobs:
     run-full-tests-for-java:

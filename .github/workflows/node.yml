@@ -48,6 +48,9 @@ concurrency:
 env:
     CARGO_TERM_COLOR: always
 
+run-name:
+    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
+
 jobs:
     get-matrices:
         runs-on: ubuntu-latest

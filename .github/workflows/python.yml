@@ -52,6 +52,9 @@ permissions:
     # Allows the GITHUB_TOKEN to make an API call to generate an OIDC token.
     id-token: write
 
+run-name:
+    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
+
 jobs:
     get-matrices:
         runs-on: ubuntu-latest

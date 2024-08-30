@@ -41,6 +41,9 @@ concurrency:
     group: java-${{ github.head_ref || github.ref }}
     cancel-in-progress: true
 
+run-name:
+    ${{ inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name }}
+
 jobs:
     log-contexts:
         runs-on: ubuntu-latest
