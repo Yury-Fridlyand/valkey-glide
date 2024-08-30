@@ -14,7 +14,7 @@ on:
                 description: "Test run name"
 
     schedule:
-        - cron: "*/5 * * * *"
+        - cron: "*/10 * * * *"
 #        - cron: "0 3 * * *"  #  Runs at 03:00 (3 AM) UTC every day
 
 concurrency:
