@@ -41,7 +41,7 @@ runs:
                   echo 'Pick all engines - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo engine-matrix=$(jq -c . < .github/json_matrices/engine-matrix.json) >> $GITHUB_OUTPUT
               fi
-              echo "engine-matrix=$(cat $GITHUB_OUTPUT)"
+              cat $GITHUB_OUTPUT
 
         - name: Load host matrix
           id: load-host-matrix
@@ -55,7 +55,7 @@ runs:
                   echo 'Pick all runners assigned for the chosen client (language) - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo host-matrix=$(jq -c '[.[] | select(.languages | type == "array" and contains(["${{ inputs.language-name }}"]))]' < .github/json_matrices/build-matrix.json) >> $GITHUB_OUTPUT
               fi
-              echo "host-matrix=$(cat $GITHUB_OUTPUT)"
+              cat $GITHUB_OUTPUT
 
         - name: Create language version matrix
           id: create-lang-version-matrix
@@ -69,4 +69,4 @@ runs:
                   echo 'Pick language versions listed in 'versions' - on cron (schedule) or if manually triggered job requires a full matrix'
                   echo version-matrix=$(jq -c '[.[] | select(.language == "${{ inputs.language-name }}") | .versions | map({version: .})]' < .github/json_matrices/supported-language-versions.json) >> $GITHUB_OUTPUT
               fi
-              echo "version-matrix=$(cat $GITHUB_OUTPUT)"
+              cat $GITHUB_OUTPUT
