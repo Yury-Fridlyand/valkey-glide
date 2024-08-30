@@ -11,7 +11,9 @@ on:
             - .github/workflows/test-benchmark/action.yml
             - .github/workflows/lint-rust/action.yml
             - .github/workflows/install-valkey/action.yml
-            - .github/json_matrices/build-matrix.json
+            - .github/workflows/create-test-matrices/action.yml
+            - .github/json_matrices/**
+
     pull_request:
         paths:
             - glide-core/src/**
@@ -22,7 +24,9 @@ on:
             - .github/workflows/test-benchmark/action.yml
             - .github/workflows/lint-rust/action.yml
             - .github/workflows/install-valkey/action.yml
-            - .github/json_matrices/build-matrix.json
+            - .github/workflows/create-test-matrices/action.yml
+            - .github/json_matrices/**
+
     workflow_dispatch:
         inputs:
             full-matrix:
