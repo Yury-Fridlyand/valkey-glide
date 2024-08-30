@@ -65,7 +65,7 @@ jobs:
               uses: ./.github/workflows/create-test-matrices
               with:
                   language-name: node
-                  run-full-matrix: ${{ github.event.inputs.full-matrix || 'false' }}
+                  run-full-matrix: ${{ github.event.inputs.full-matrix || 'true' }}
 
     test-node:
         runs-on: ubuntu-latest
