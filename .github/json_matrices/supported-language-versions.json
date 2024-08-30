@@ -11,7 +11,7 @@
     },
     {
         "language": "node",
-        "full-versions": ["16.x", "17.x", "18.x", "19.x", "20.x"],
+        "versions": ["16.x", "17.x", "18.x", "19.x", "20.x"],
         "always-run-versions": ["16.x", "20.x"]
     }
 ]
