@@ -40,10 +40,6 @@ on:
                 description: "Test run name"
 
     workflow_call:
-        inputs:
-            full-matrix:
-                required: true
-                type: boolean
 
 concurrency:
     group: java-${{ github.head_ref || github.ref }}
@@ -73,7 +69,8 @@ jobs:
               uses: ./.github/workflows/create-test-matrices
               with:
                   language-name: java
-                  run-full-matrix: ${{ github.event.inputs.full-matrix || 'false' }}
+                  # Run full test matrix if job started by cron or it was explictly specified by a person who triggered the workflow
+                  run-full-matrix: ${{ github.event.inputs.full-matrix || github.event_name == 'schedule' || 'false' }}
 
     test-java:
         needs: get-matrices

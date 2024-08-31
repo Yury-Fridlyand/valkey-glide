@@ -26,10 +26,6 @@ on:
             - .github/json_matrices/build-matrix.json
     workflow_dispatch:
     workflow_call:
-        inputs:
-            full-matrix:
-                required: true
-                type: boolean
 
 concurrency:
     group: go-${{ github.head_ref || github.ref }}
