@@ -13,7 +13,6 @@ on:
             - .github/workflows/test-benchmark/action.yml
             - .github/workflows/lint-rust/action.yml
             - .github/workflows/install-valkey/action.yml
-            - .github/workflows/start-self-hosted-runner/action.yml
             - .github/workflows/create-test-matrices/action.yml
             - .github/json_matrices/**
 
@@ -29,7 +28,6 @@ on:
             - .github/workflows/test-benchmark/action.yml
             - .github/workflows/lint-rust/action.yml
             - .github/workflows/install-valkey/action.yml
-            - .github/workflows/start-self-hosted-runner/action.yml
             - .github/workflows/create-test-matrices/action.yml
             - .github/json_matrices/**
 
@@ -43,7 +41,7 @@ on:
             name:
                 required: false
                 type: string
-                description: "Test run name"
+                description: "(Optional) Test run name"
 
     workflow_call:
 
@@ -57,6 +55,7 @@ permissions:
     id-token: write
 
 run-name:
+    # Set custom name if job is started manually and name is given
     ${{ github.event_name == 'workflow_dispatch' && (inputs.name == '' && format('{0} @ {1}', github.ref_name, github.sha) || inputs.name) || '' }}
 
 jobs:
