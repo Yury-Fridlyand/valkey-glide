@@ -5,7 +5,7 @@
         "RUNNER": "ubuntu-latest",
         "ARCH": "x64",
         "TARGET": "x86_64-unknown-linux-gnu",
-        "PACKAGE_MANAGERS": ["pypi", "npm"],
+        "PACKAGE_MANAGERS": ["pypi", "npm", "maven"]
         "run": "always",
         "languages": ["python", "node", "java", "go", "dotnet"]
     },
@@ -15,7 +15,7 @@
         "RUNNER": ["self-hosted", "Linux", "ARM64"],
         "ARCH": "arm64",
         "TARGET": "aarch64-unknown-linux-gnu",
-        "PACKAGE_MANAGERS": ["pypi", "npm"],
+        "PACKAGE_MANAGERS": ["pypi", "npm", "maven"],
         "CONTAINER": "2_28",
         "languages": ["python", "node", "java", "go", "dotnet"]
     },
@@ -25,7 +25,7 @@
         "RUNNER": "macos-12",
         "ARCH": "x64",
         "TARGET": "x86_64-apple-darwin",
-        "PACKAGE_MANAGERS": ["pypi", "npm"],
+        "PACKAGE_MANAGERS": ["pypi", "npm", "maven"],
         "languages": ["python", "node", "java", "go", "dotnet"]
     },
     {
@@ -34,7 +34,7 @@
         "RUNNER": "macos-latest",
         "ARCH": "arm64",
         "TARGET": "aarch64-apple-darwin",
-        "PACKAGE_MANAGERS": ["pypi", "npm"],
+        "PACKAGE_MANAGERS": ["pypi", "npm", "maven"],
         "languages": ["python", "node", "java", "go", "dotnet"]
     },
     {

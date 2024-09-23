@@ -12,6 +12,7 @@ let globalObject = global as unknown;
 /* eslint-disable @typescript-eslint/no-require-imports */
 function loadNativeBinding() {
     let nativeBinding = null;
+
     switch (platform) {
         case "linux":
             switch (arch) {
@@ -27,6 +28,7 @@ function loadNativeBinding() {
                             nativeBinding = require("@scope/valkey-glide-linux-x64");
                             break;
                     }
+
                     break;
                 case "arm64":
                     switch (familySync()) {
@@ -40,12 +42,14 @@ function loadNativeBinding() {
                             nativeBinding = require("@scope/valkey-glide-linux-arm64");
                             break;
                     }
+
                     break;
                 default:
                     throw new Error(
                         `Unsupported OS: ${platform}, architecture: ${arch}`,
                     );
             }
+
             break;
         case "darwin":
             switch (arch) {
@@ -60,15 +64,18 @@ function loadNativeBinding() {
                         `Unsupported OS: ${platform}, architecture: ${arch}`,
                     );
             }
+
             break;
         default:
             throw new Error(
                 `Unsupported OS: ${platform}, architecture: ${arch}`,
             );
     }
+
     if (!nativeBinding) {
         throw new Error(`Failed to load native binding`);
     }
+
     return nativeBinding;
 }
 
@@ -77,6 +84,8 @@ function initialize() {
     const {
         AggregationType,
         BaseScanOptions,
+        ZScanOptions,
+        HScanOptions,
         BitEncoding,
         BitFieldGet,
         BitFieldIncrBy,
@@ -108,7 +117,11 @@ function initialize() {
         GlideClient,
         GlideClusterClient,
         GlideClientConfiguration,
+        GlideRecord,
         GlideString,
+        SortedSetDataType,
+        StreamEntryDataType,
+        HashDataType,
         FunctionListOptions,
         FunctionListResponse,
         FunctionStatsSingleResponse,
@@ -144,7 +157,7 @@ function initialize() {
         RangeByScore,
         RangeByLex,
         ReadFrom,
-        RedisCredentials,
+        ServerCredentials,
         SortClusterOptions,
         SortOptions,
         SortedSetRange,
@@ -155,12 +168,11 @@ function initialize() {
         StreamReadOptions,
         StreamClaimOptions,
         StreamPendingOptions,
-        ScriptOptions,
         ClosingError,
         ConfigurationError,
         ExecAbortError,
-        RedisError,
-        ReturnType,
+        ValkeyError,
+        GlideReturnType,
         StreamEntries,
         ReturnTypeXinfoStream,
         RequestError,
@@ -185,6 +197,8 @@ function initialize() {
     module.exports = {
         AggregationType,
         BaseScanOptions,
+        HScanOptions,
+        ZScanOptions,
         BitEncoding,
         BitFieldGet,
         BitFieldIncrBy,
@@ -202,7 +216,11 @@ function initialize() {
         Decoder,
         DecoderOption,
         GeoAddOptions,
+        GlideRecord,
         GlideString,
+        SortedSetDataType,
+        StreamEntryDataType,
+        HashDataType,
         CoordOrigin,
         MemberOrigin,
         SearchOrigin,
@@ -254,7 +272,7 @@ function initialize() {
         RangeByScore,
         RangeByLex,
         ReadFrom,
-        RedisCredentials,
+        ServerCredentials,
         SortClusterOptions,
         SortOptions,
         SortedSetRange,
@@ -265,12 +283,11 @@ function initialize() {
         StreamReadGroupOptions,
         StreamReadOptions,
         StreamPendingOptions,
-        ScriptOptions,
         ClosingError,
         ConfigurationError,
         ExecAbortError,
-        RedisError,
-        ReturnType,
+        ValkeyError,
+        GlideReturnType,
         RequestError,
         TimeoutError,
         ConnectionError,

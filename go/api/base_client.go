@@ -10,15 +10,19 @@ package api
 import "C"
 
 import (
+	"errors"
+	"strconv"
 	"unsafe"
 
 	"github.com/valkey-io/valkey-glide/go/glide/protobuf"
+	"github.com/valkey-io/valkey-glide/go/glide/utils"
 	"google.golang.org/protobuf/proto"
 )
 
 // BaseClient defines an interface for methods common to both [GlideClient] and [GlideClusterClient].
 type BaseClient interface {
 	StringCommands
+	HashCommands
 
 	// Close terminates the client by closing all associated resources.
 	Close()
@@ -99,7 +103,13 @@ func (client *baseClient) executeCommand(requestType C.RequestType, args []strin
 		return nil, &ClosingError{"ExecuteCommand failed. The client is closed."}
 	}
 
-	cArgs, argLengths := toCStrings(args)
+	var cArgsPtr *C.uintptr_t = nil
+	var argLengthsPtr *C.ulong = nil
+	if len(args) > 0 {
+		cArgs, argLengths := toCStrings(args)
+		cArgsPtr = &cArgs[0]
+		argLengthsPtr = &argLengths[0]
+	}
 
 	resultChannel := make(chan payload)
 	resultChannelPtr := uintptr(unsafe.Pointer(&resultChannel))
@@ -109,8 +119,8 @@ func (client *baseClient) executeCommand(requestType C.RequestType, args []strin
 		C.uintptr_t(resultChannelPtr),
 		uint32(requestType),
 		C.size_t(len(args)),
-		&cArgs[0],
-		&argLengths[0],
+		cArgsPtr,
+		argLengthsPtr,
 	)
 	payload := <-resultChannel
 	if payload.error != nil {
@@ -119,19 +129,12 @@ func (client *baseClient) executeCommand(requestType C.RequestType, args []strin
 	return payload.value, nil
 }
 
-// Convert `s` of type `string` into `[]byte`
-func StringToBytes(s string) []byte {
-	p := unsafe.StringData(s)
-	b := unsafe.Slice(p, len(s))
-	return b
-}
-
 // Zero copying conversion from go's []string into C pointers
 func toCStrings(args []string) ([]C.uintptr_t, []C.ulong) {
 	cStrings := make([]C.uintptr_t, len(args))
 	stringLengths := make([]C.ulong, len(args))
 	for i, str := range args {
-		bytes := StringToBytes(str)
+		bytes := utils.StringToBytes(str)
 		ptr := uintptr(unsafe.Pointer(&bytes[0]))
 		cStrings[i] = C.uintptr_t(ptr)
 		stringLengths[i] = C.size_t(len(str))
@@ -144,7 +147,8 @@ func (client *baseClient) Set(key string, value string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return handleStringResponse(result), nil
+
+	return handleStringResponse(result)
 }
 
 func (client *baseClient) SetWithOptions(key string, value string, options *SetOptions) (string, error) {
@@ -152,7 +156,8 @@ func (client *baseClient) SetWithOptions(key string, value string, options *SetO
 	if err != nil {
 		return "", err
 	}
-	return handleStringOrNullResponse(result), nil
+
+	return handleStringOrNullResponse(result)
 }
 
 func (client *baseClient) Get(key string) (string, error) {
@@ -160,5 +165,238 @@ func (client *baseClient) Get(key string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return handleStringOrNullResponse(result), nil
+
+	return handleStringOrNullResponse(result)
+}
+
+func (client *baseClient) MSet(keyValueMap map[string]string) (string, error) {
+	result, err := client.executeCommand(C.MSet, utils.MapToString(keyValueMap))
+	if err != nil {
+		return "", err
+	}
+
+	return handleStringResponse(result)
+}
+
+func (client *baseClient) MSetNX(keyValueMap map[string]string) (bool, error) {
+	result, err := client.executeCommand(C.MSetNX, utils.MapToString(keyValueMap))
+	if err != nil {
+		return false, err
+	}
+
+	return handleBooleanResponse(result)
+}
+
+func (client *baseClient) MGet(keys []string) ([]string, error) {
+	result, err := client.executeCommand(C.MGet, keys)
+	if err != nil {
+		return nil, err
+	}
+
+	return handleStringArrayResponse(result)
+}
+
+func (client *baseClient) Incr(key string) (int64, error) {
+	result, err := client.executeCommand(C.Incr, []string{key})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) IncrBy(key string, amount int64) (int64, error) {
+	result, err := client.executeCommand(C.IncrBy, []string{key, utils.IntToString(amount)})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) IncrByFloat(key string, amount float64) (float64, error) {
+	result, err := client.executeCommand(
+		C.IncrByFloat,
+		[]string{key, utils.FloatToString(amount)},
+	)
+	if err != nil {
+		return 0, err
+	}
+
+	return handleDoubleResponse(result)
+}
+
+func (client *baseClient) Decr(key string) (int64, error) {
+	result, err := client.executeCommand(C.Decr, []string{key})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) DecrBy(key string, amount int64) (int64, error) {
+	result, err := client.executeCommand(C.DecrBy, []string{key, utils.IntToString(amount)})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) Strlen(key string) (int64, error) {
+	result, err := client.executeCommand(C.Strlen, []string{key})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) SetRange(key string, offset int, value string) (int64, error) {
+	result, err := client.executeCommand(C.SetRange, []string{key, strconv.Itoa(offset), value})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) GetRange(key string, start int, end int) (string, error) {
+	result, err := client.executeCommand(C.GetRange, []string{key, strconv.Itoa(start), strconv.Itoa(end)})
+	if err != nil {
+		return "", err
+	}
+
+	return handleStringResponse(result)
+}
+
+func (client *baseClient) Append(key string, value string) (int64, error) {
+	result, err := client.executeCommand(C.Append, []string{key, value})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) LCS(key1 string, key2 string) (string, error) {
+	result, err := client.executeCommand(C.LCS, []string{key1, key2})
+	if err != nil {
+		return "", err
+	}
+
+	return handleStringResponse(result)
+}
+
+func (client *baseClient) GetDel(key string) (string, error) {
+	if key == "" {
+		return "", errors.New("key is required")
+	}
+
+	result, err := client.executeCommand(C.GetDel, []string{key})
+	if err != nil {
+		return "", err
+	}
+
+	return handleStringOrNullResponse(result)
+}
+
+func (client *baseClient) HGet(key string, field string) (string, error) {
+	result, err := client.executeCommand(C.HGet, []string{key, field})
+	if err != nil {
+		return "", err
+	}
+
+	return handleStringOrNullResponse(result)
+}
+
+func (client *baseClient) HGetAll(key string) (map[string]string, error) {
+	result, err := client.executeCommand(C.HGetAll, []string{key})
+	if err != nil {
+		return nil, err
+	}
+
+	return handleStringToStringMapResponse(result)
+}
+
+func (client *baseClient) HMGet(key string, fields []string) ([]string, error) {
+	result, err := client.executeCommand(C.HMGet, append([]string{key}, fields...))
+	if err != nil {
+		return nil, err
+	}
+
+	return handleStringArrayResponse(result)
+}
+
+func (client *baseClient) HSet(key string, values map[string]string) (int64, error) {
+	result, err := client.executeCommand(C.HSet, utils.ConvertMapToKeyValueStringArray(key, values))
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) HSetNX(key string, field string, value string) (bool, error) {
+	result, err := client.executeCommand(C.HSetNX, []string{key, field, value})
+	if err != nil {
+		return false, err
+	}
+
+	return handleBooleanResponse(result)
+}
+
+func (client *baseClient) HDel(key string, fields []string) (int64, error) {
+	result, err := client.executeCommand(C.HDel, append([]string{key}, fields...))
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) HLen(key string) (int64, error) {
+	result, err := client.executeCommand(C.HLen, []string{key})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
+}
+
+func (client *baseClient) HVals(key string) ([]string, error) {
+	result, err := client.executeCommand(C.HVals, []string{key})
+	if err != nil {
+		return nil, err
+	}
+
+	return handleStringArrayResponse(result)
+}
+
+func (client *baseClient) HExists(key string, field string) (bool, error) {
+	result, err := client.executeCommand(C.HExists, []string{key, field})
+	if err != nil {
+		return false, err
+	}
+
+	return handleBooleanResponse(result)
+}
+
+func (client *baseClient) HKeys(key string) ([]string, error) {
+	result, err := client.executeCommand(C.HKeys, []string{key})
+	if err != nil {
+		return nil, err
+	}
+
+	return handleStringArrayResponse(result)
+}
+
+func (client *baseClient) HStrLen(key string, field string) (int64, error) {
+	result, err := client.executeCommand(C.HStrlen, []string{key, field})
+	if err != nil {
+		return 0, err
+	}
+
+	return handleLongResponse(result)
 }
